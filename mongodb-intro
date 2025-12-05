@@ -1,1 +1,25 @@
 hi
+Mongodb advantages ->
+1. we can store data in multiple formats , list dictionaries, arrays etc..
+(all these are stored in 'bson' format : bitwise json format)
+
+ability to scale horizontally : we can dsitribute data across mutiple servers
+(large datasets and high availability)
+
+also support - rich queries, indexing and aggregation
+
+Dockers and containization -> has ability to store everything my application needs
+1. runs the application in all servers and systems the same way
+2. can run multiple applications on the same server without them interfering with each other
+3. efficiency, light weight , and same server as the host operating server
+4. scalability - can handle multiple users
+
+Docker composed -> tool to run multiple docker application
+elements of docker composed ->
+YAMl file -> to configure application services
+single command -> allows starting all services with a single command
+environment managment -> can manage multiple environments)vm) for my application
+network creation -> automatically creates network for my applications containers
+
+we will use a docker file to define the environment for fastapi backend,
+docker composed for move orchestrate through for react front end and mongodb database
