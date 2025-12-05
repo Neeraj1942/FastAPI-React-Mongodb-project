@@ -1,1 +1,124 @@
-h
+Features of react ->
+1. component based architecture : reusable ui components
+2. Virtual Dom : when state of an object changes, it updates the virtual dom first
+3. Declarative UI -> updates UI when the right compoment changes
+4. JSX -> syntax extension, helps write html in java script
+
+react : npx create-react-app my-app
+
+after installing the node using homebrew/brew 
+cd my-app
+in this we do : npm start -> this will start the development server
+
+/src/create a new welcome.js
+
+in welcome.js ->
+import React from 'react'
+
+function Welcome(props){
+  return <h1>Hello, {props.name}!</h1>;
+}
+export default Welcome;
+
+
+App.js ->
+import React from 'react';
+import Welcome from './Welcome';
+
+function App() {
+  return (
+    <div>
+      <Welcome name="Neeraj" />
+      <Welcome name="Bob" />
+      <Welcome name="Charlie" />
+    </div>
+  );
+}
+
+export default App;
+
+App
+ └─ div
+     ├─ Welcome(name="Neeraj")
+     ├─ Welcome(name="Bob")
+     └─ Welcome(name="Charlie")
+
+
+Understanding how clock works ->
+import React , {Compoment } from 'react';
+class Clock extends Compoments{
+    constructor(props) {
+        super(props);
+        this.state = {date: new Date() };
+    }
+
+    componentDidMount() {
+        this.timerID = setInterval(() => this.tick(), 1000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.timerID);
+    }
+
+    tick() {
+        this.setState({
+        date : new Date()
+        });
+    }
+
+    render() {
+        return(
+            <div>
+                <h1>Hello, world!</h1>
+                <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+            </div>
+        );
+    }
+}
+
+export default Clock;
+
+Explanation :
+extends Component → Clock inherits features from React’s Component class.
+
+constructor(props) { super(props); this.state = {date: new Date()}; }
+Constructor initializes the component.
+super(props) calls the parent class constructor, required in React class components.
+this.state = { date: new Date() } initializes a state object.
+state holds data that can change over time.
+Here, date is the current date and time.
+
+4️⃣ componentDidMount() { this.timerID = setInterval(() => this.tick(), 1000); }
+componentDidMount is a lifecycle method that runs after the component is inserted into the DOM.
+setInterval(() => this.tick(), 1000) → calls the tick() method every 1 second.
+this.timerID stores the interval ID so we can clear it later.
+
+5️⃣ componentWillUnmount() { clearInterval(this.timerID); }
+componentWillUnmount runs just before the component is removed from the DOM.
+clearInterval(this.timerID) stops the timer to prevent memory leaks.
+
+6️⃣ tick() { this.setState({ date: new Date() }); }
+tick updates the state every second.
+this.setState(...) tells React to re-render the component with the new state.
+date: new Date() → updates the time.
+
+7️⃣ render() { return ( ... ); }
+render is a required method in class components.
+Returns JSX (HTML-like code) that will appear in the browser.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
