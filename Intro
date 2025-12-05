@@ -56,6 +56,15 @@ Both are fully async → extremely fast.
 
 -> uvicorn main:app --reload
 
+when opened in the server ->
+http://127.0.0.1:8000/items -> hello : world
+http://127.0.0.1:8000/items/6?q=letsgo -> 
+
+| URL                    | FastAPI `q` value |
+| ---------------------- | ----------------- |
+| `/items/6?q=letsgo`    | `"letsgo"`        |
+| `/items/6?q=lets%20go` | `"lets go"`       |
+| `/items/6?q=lets+go`   | `"lets go"`       |
 
 
 
