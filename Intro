@@ -1,0 +1,20 @@
+FastAPI -> python based web framework
+scarlet -> build in top of starlet for the web parts
+pydantic -> data part
+
+React -> pjavascript library for building user interfaces
+
+mongodb -> document oriented no sql database stores data in flexible json like documents ; meaning datastructes can be changed overtime
+
+FastAPI ->
+pip install "fastapi[standard]"
+-> install
+
+pip install "fastapi[all]"
+from typing import union 
+
+code ->
+app = FastAPI()
+✔️ Creates your FastAPI application
+✔️ Used to define all API endpoints
+✔️ Uvicorn runs this object
