@@ -23,3 +23,5 @@ network creation -> automatically creates network for my applications containers
 
 we will use a docker file to define the environment for fastapi backend,
 docker composed for move orchestrate through for react front end and mongodb database
+
+
