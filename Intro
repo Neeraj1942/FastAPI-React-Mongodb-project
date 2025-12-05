@@ -66,6 +66,48 @@ http://127.0.0.1:8000/items/6?q=letsgo ->
 | `/items/6?q=lets%20go` | `"lets go"`       |
 | `/items/6?q=lets+go`   | `"lets go"`       |
 
+http://127.0.0.1:8000/docs -> shows the documentation of the api
+http://127.0.0.1:8000/redoc -> different way to show the documentation of the api
+
+
+put request ->
+from pydantic import BaseModel
+
+class Item(baseModel):
+  name : str
+  price : float
+  is_offer : Union[bool,None] = None
+
+@app.put("/items/{item_id}")
+def update_item(item_id :int ,item: Item):
+  return {"item_name" : item.name, "item_id" : item_id}
+
+Get v/s Put request :
+| Feature    | GET                      | PUT                    |
+| ---------- | ------------------------ | ---------------------- |
+| Purpose    | Read data                | Update/create data     |
+| Body       | ❌ usually empty          | ✔ contains data (JSON) |
+| Idempotent | ✔                        | ✔                      |
+| Cacheable  | ✔                        | ❌                      |
+| Safety     | ✔ Does not modify server | ❌ Modifies server      |
+| Example    | Get item info            | Update item info       |
+
+Client sends this JSON:
+{
+  "name": "Pen",
+  "price": 10.5,
+  "is_offer": true
+}
+
+FastAPI parses it into an Item object: 
+item.name      # "Pen"
+item.price     # 10.5
+item.is_offer  # True
+
+PUT request (@app.put)
+PUT is an HTTP method used to update data on the server.
+The URL path /items/{item_id} identifies which resource to update.
+The request body contains the new data to update.
 
 
 
