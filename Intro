@@ -18,3 +18,55 @@ app = FastAPI()
 ✔️ Creates your FastAPI application
 ✔️ Used to define all API endpoints
 ✔️ Uvicorn runs this object
+
+@app.get("/")
+4 examples
+@ → decorator symbol.
+app → FastAPI application instance.
+get → HTTP method for retrieval.
+"/" → root URL path
+
+/items/10
+Returns:
+{
+  "item_id": 10,
+  "q": null
+}
+/items/10?q=phone
+Returns:
+{
+  "item_id": 10,
+  "q": "phone"
+}
+
+the ? marks seperates the items value and q value ->
+? : is how the urls work, it is standard format.
+/items/30?q=20p
+{
+  "item_id": 30,
+  "q": "20p"
+}
+
+(/path?query#fragment)
+
+we run the server using uvicorn server -> pip install uvicorn
+FastAPI is built on ASGI (Asynchronous Server Gateway Interface).
+Uvicorn is an ASGI server.
+Both are fully async → extremely fast.
+
+-> uvicorn main:app --reload
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
