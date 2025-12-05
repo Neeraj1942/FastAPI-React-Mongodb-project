@@ -36,6 +36,15 @@ To do items ->
 2. PATCH /api/lists/{list_id}/Checked_state : Update checked state
 3. DELETE /api/lists/{list_id}/items/{item_id}: Delete item from list
 
+| Endpoint                               | Method | Purpose             | Example                        |
+| -------------------------------------- | ------ | ------------------- | ------------------------------ |
+| `/api/lists`                           | GET    | Get all lists       | `[{"id":1,"name":"Shopping"}]` |
+| `/api/lists`                           | POST   | Create a list       | `{"name":"Weekend Tasks"}`     |
+| `/api/lists/{list_id}`                 | GET    | Get list with items | `{"id":1,"items":[...]}`       |
+| `/api/lists/{list_id}`                 | DELETE | Delete list         | `{"message":"List deleted"}`   |
+| `/api/lists/{list_id}/items`           | POST   | Add item            | `{"name":"Buy bread"}`         |
+| `/api/lists/{list_id}/Checked_state`   | PATCH  | Update checked      | `{"item_id":2,"checked":true}` |
+| `/api/lists/{list_id}/items/{item_id}` | DELETE | Delete item         | `{"message":"Item deleted"}`   |
 
 
 
