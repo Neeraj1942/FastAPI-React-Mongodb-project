@@ -1,0 +1,42 @@
+1. Multiple to do list - create/view/update/delete mutiple to do lists(each list has names and multiple to do items)
+2. Todo items - create/view/update/delete mutiple to do items(each list has label, a checked unchecked status and belongs to specific list)
+
+3. Real time updates - any changes to the list changes the real time updates
+4. Responsive design - can work on desktop and mobile devices
+
+consists of 2 main structes ->
+1.to do list ->
+{
+"_id" : ObjectId,
+"name": String
+"items":[
+{
+  "id" : String,
+  "label" : String,
+  "checked" : Boolean
+}
+]}
+
+summary for displaying all the lists in the to-do list ->
+{
+"_id" : ObjectId,
+"name": String
+"item_count": Integer
+}
+
+Fast API backend will have the following end points :
+To do lists ->
+1. GET/api/lists : Retrieve all todo lists (summary view)
+2. POST /api/lists : Create a new todo list
+3. GET /api/lists{list_id} : Retrive a todo list with all items 
+4. DELETE /api/lists/{list_id} : Delete a specific todo list
+
+To do items ->
+1. POST /api/lists/{list_id}/items : Add a new item to a specific list
+2. PATCH /api/lists/{list_id}/Checked_state : Update checked state
+3. DELETE /api/lists/{list_id}/items/{item_id}: Delete item from list
+
+
+
+
+
