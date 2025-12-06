@@ -46,6 +46,14 @@ To do items ->
 | `/api/lists/{list_id}/Checked_state`   | PATCH  | Update checked      | `{"item_id":2,"checked":true}` |
 | `/api/lists/{list_id}/items/{item_id}` | DELETE | Delete item         | `{"message":"Item deleted"}`   |
 
+| Method | Purpose                                  |
+| ------ | ---------------------------------------- |
+| GET    | Retrieve data from the server.           |
+| POST   | Create a new resource on the server.     |
+| PUT    | Replace an existing resource completely. |
+| PATCH  | Partially update an existing resource.   |
+| $push  | Add an element to an array in MongoDB.   |
+
 
 Starting the file ->
 new document - farm-todo 
@@ -207,6 +215,21 @@ async def lifespan(app: FastAPI):
 
     yield
     client.close()
+
+
+note : | Keyword | What it does                                        | Usage                         | Notes                                                                                   |
+| ------- | --------------------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------- |
+| `async` | Declares a coroutine function that can pause/resume | `async def fetch_data(): ...` | Makes the function return a coroutine object                                            |
+| `await` | Pauses execution until an async operation completes | `result = await fetch_data()` | Can only be used inside an `async` function; executes the coroutine and gets the result |
+
+| Concept                            | Purpose                                                                    |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `async` / `await`                  | Make the code **non-blocking**; wait for result asynchronously             |
+| `ReturnDocument.AFTER` / `.BEFORE` | Decide whether MongoDB returns the **document before or after the update** |
+
+
+
+
 
 
 
