@@ -47,5 +47,130 @@ To do items ->
 | `/api/lists/{list_id}/items/{item_id}` | DELETE | Delete item         | `{"message":"Item deleted"}`   |
 
 
+Starting the file ->
+new document - farm-todo 
+then make 2 folders -> backend and frontend
+
+cd backend
+create 2 files Dockerfile, pyproject.toml
+then environment venv 
+venv -> pip install "fastapi[all]" "motor[srv]" beanie aiostream
+
+to create a txt file ->
+pip freeze > requirements.txt 
+
+GIVE INSTRUCTION TO ->
+Dockerfile and pyproject.toml files
+
+then create an folder 'src' in backend
+in src -> create 2 files inside
+1. server.py 
+2. dal.py
+
+
+dal.py ->
+from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorCollection
+from pymongo import ReturnDocument
+from pydantic import BaseModel
+from uuid import uuid4
+
+bson.ObjectId → Represents MongoDB’s _id values.
+AsyncIOMotorCollection → Asynchronous MongoDB collection from Motor.
+ReturnDocument → Used in find_one_and_update to specify whether to return the document before or after update.
+BaseModel → Pydantic model for data validation and parsing.
+uuid4 → Generates unique IDs for To-Do items.
+
+(this is for the summary all the items in the list 
+These models define the shape of your data in Python and provide conversion from MongoDB documents (dicts) to Python objects.
+class ListSummary(BaseModel):
+  id: str
+  name: str
+  item_count: int
+
+Converts a MongoDB document (doc) to a ListSummary instance.
+Converts _id to a string for easier handling in Python/JSON.
+  @staticmethod
+  def from_doc(doc) -> "ListSummary":
+      return ListSummary(
+          id=str(doc["_id"]),
+          name=doc["name"],
+          item_count=doc["item_count"],
+      )
+
+similarly, for todo list ->
+this code defines the shape of the pydantic model ->
+class ToDoListItem(BaseModel):
+  id: str
+  label: str
+  checked: bool
+
+this code it to convet the database into from mongodb to pydantic model data 
+this also creates an instance of the pydantic model ->
+  @staticmethod
+  def from_doc(item) -> "ToDoListItem":
+      return ToDoListItem(
+          id=item["_id"],
+          label=item["label"],
+          checked=item["checked"],
+      )
+
+similarly we define the shape of pydantic model ->
+class ToDoList(BaseModel):
+  id: str
+  name: str
+  items: list[ToDoListItem]
+
+then we create an intance to convert the mongodb data into pydantic python objects ->
+@staticmethod
+  def from_doc(doc) -> "ToDoList":
+      return ToDoList(
+          id=str(doc["_id"]),
+          name=doc["name"],
+          items=[ToDoListItem.from_doc(item) for item in doc["items"]],
+      )
+
+| Model            | Used For        | Contains             | Why separate?            |
+| ---------------- | --------------- | -------------------- | ------------------------ |
+| **ListSummary**  | List overview   | id, name, item_count | Lightweight, fast for UI |
+| **ToDoListItem** | Individual item | id, label, checked   | Modular, reusable        |
+| **ToDoList**     | Full list       | id, name, items[]    | Complete representation  |
+
+Data Access Layer (DAL)
+The ToDoDAL class is responsible for all MongoDB operations related to To-Do lists.
+It abstracts away database logic so the rest of the app can just call these methods.
+
+def __init__(self, todo_collection: AsyncIOMotorCollection):
+      self._todo_collection = todo_collection
+
+async : allows Python to run non-blocking code. With async, Python can continue doing other work while waiting — instead of freezing.
+
+return -> Stops the function and returns a single value
+yield -> Pauses the function and returns a value, but can continue later
+
+$ (positional operator) -> Targets the matched array element (items.$.checked)
+
+These functions talk to MongoDB, perform CRUD operations, and then convert the 
+database documents into Pydantic models for clean, typed use in your application.
+
+| Method                  | Purpose                              | MongoDB Operation                 | What It Does                                 | Returns                   |
+| ----------------------- | ------------------------------------ | --------------------------------- | -------------------------------------------- | ------------------------- |
+| **`list_todo_lists`**   | List all to-do lists with item count | `find()`                          | Uses projection + `$size`, sorted by name    | `ListSummary` (generator) |
+| **`create_todo_list`**  | Create a new to-do list              | `insert_one()`                    | Inserts `{name, items: []}`                  | New list ID (string)      |
+| **`get_todo_list`**     | Get one list by ID                   | `find_one()`                      | Fetches and converts to Pydantic             | `ToDoList`                |
+| **`delete_todo_list`**  | Delete a list                        | `delete_one()`                    | Removes document by `_id`                    | `True` / `False`          |
+| **`create_item`**       | Add an item to a list                | `find_one_and_update()` + `$push` | Pushes new item into `items` array           | Updated `ToDoList`        |
+| **`set_checked_state`** | Update item’s checked field          | `find_one_and_update()` + `$set`  | Uses positional `$` to update the right item | Updated `ToDoList`        |
+| **`delete_item`**       | Remove an item                       | `find_one_and_update()` + `$pull` | Pulls item with matching `id` from array     | Updated `ToDoList`        |
+
+
+
+
+
+
+
+
+
+
 
 
