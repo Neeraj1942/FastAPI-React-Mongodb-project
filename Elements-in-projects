@@ -377,12 +377,37 @@ Keeps frontend and backend on separate ports internally, but users access everyt
 now setting up the react application ->
 farm-todo -> frontend -> 
 in terminal : npx create-react-app .
+note : we have to give a name to the react , but if you want to create a react app without a name we use "." instead of "my-app"
+
+install more dependencies : npm install axios react-icons
+
+in frontend -> src ->app.js -> 
+Fetches all To-Do lists from the API on load.
+Shows either the list of all To-Do lists or a single selected list.
+Lets you create a new list, delete a list, and select a list to view.
+State (selectedItem) controls which view is shown.
+Reloads data from the API after any create or delete action.
+
+function handleDeleteToDoList(id) {
+  const updateData = async () => {
+    await axios.delete(`/api/lists/${id}`);
+    reloadData().catch(console.error);
+  };
+  updateData();
+}
+
+explanation ->
+handleDeleteToDoList(id) is called when you want to delete a To-Do list.
+Inside it, updateData is an async function that:
+Sends a DELETE request to the backend API for the list with the given id.
+After the deletion, it calls reloadData() to fetch the updated list from the backend so the UI shows the latest data.
+updateData() is called immediately to perform the deletion.
+
+axios is a JavaScript library for making HTTP requests 
 
 
-
-
-
-
+To run the project ->
+terminal :farm-todo % docker-compose up --build
 
 
 
