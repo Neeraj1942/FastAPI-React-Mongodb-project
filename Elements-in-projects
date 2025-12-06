@@ -165,6 +165,48 @@ database documents into Pydantic models for clean, typed use in your application
 
 
 
+server.py ->
+| **Component / Line**                                  | **Purpose / Action**                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `imports`                                             | Load modules for async, FastAPI, MongoDB, Pydantic, and server runtime.       |
+| `COLLECTION_NAME`, `MONGODB_URI`, `DEBUG`             | Configure MongoDB collection, connection string, and debug mode.              |
+| `@asynccontextmanager lifespan`                       | Startup: connect to MongoDB, check DB, attach DAL; Shutdown: close client.    |
+| `app = FastAPI(...)`                                  | Create FastAPI app with lifespan and debug settings.                          |
+| `@app.get("/api/lists")`                              | Get all to-do lists.                                                          |
+| `@app.post("/api/lists")`                             | Create a new to-do list.                                                      |
+| `@app.get("/api/lists/{list_id}")`                    | Get a single to-do list by ID.                                                |
+| `@app.delete("/api/lists/{list_id}")`                 | Delete a to-do list.                                                          |
+| `@app.post("/api/lists/{list_id}/items/")`            | Add a new item to a list.                                                     |
+| `@app.delete("/api/lists/{list_id}/items/{item_id}")` | Delete an item from a list.                                                   |
+| `@app.patch("/api/lists/{list_id}/checked_state")`    | Update checked state of an item.                                              |
+| `@app.get("/api/dummy")`                              | Return dummy ID and timestamp (test endpoint).                                |
+| `main()`                                              | Run Uvicorn server on host `0.0.0.0:3001` with optional reload in debug mode. |
+
+
+the server.py is connected to dal.py by ->
+app -> sderver.py object : app = FastAPI(lifespan=lifespan, debug=DEBUG)
+todo_dal -> which is an dal.py object : app.todo_dal = ToDoDAL(todo_lists)
+
+when we say app.todo_dal we connect server.py to dal.py for the shape and instances ?
+
+| Term           | What it is                                      | Role / Connection                                                     |
+| -------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| `app`          | FastAPI application instance (from `server.py`) | Represents the running server and holds shared objects.               |
+| `ToDoDAL`      | Class in `dal.py`                               | Encapsulates database operations (CRUD) for to-do lists/items.        |
+| `app.todo_dal` | Instance of `ToDoDAL` attached to `app`         | Provides **a way for all routes in `server.py` to call DAL methods**. |
+
+where all this happens is inside the lifespan context manager in server.py ->
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = AsyncIOMotorClient(MONGODB_URI)
+    database = client.get_default_database()
+    todo_lists = database.get_collection(COLLECTION_NAME)
+
+    # <-- This line defines the DAL instance
+    app.todo_dal = ToDoDAL(todo_lists)
+
+    yield
+    client.close()
 
 
 
