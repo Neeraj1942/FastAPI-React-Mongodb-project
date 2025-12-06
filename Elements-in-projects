@@ -228,6 +228,158 @@ note : | Keyword | What it does                                        | Usage  
 | `ReturnDocument.AFTER` / `.BEFORE` | Decide whether MongoDB returns the **document before or after the update** |
 
 
+CREATING A MONGODB DATABASE ->
+mongodb.com -> sign in -> create a new project
+
+new project(farmstack) -> create -> cluster -> new cluster -> connection to your application (drivers) -> setup done
+
+we connect the cluster to -> username/password from project -> drivers copy the mongodb uri ->
+ex : mongodb+srv://vknd6976_db_user:<db_password>@cluster0.ys8eb3i.mongodb.net/?appName=Cluster0
+
+then we go to visual studio code ->
+to create a new '.env' file in the farm-todo directory we use ->
+touch .env ( in the terminal with path till farm-todo)
+IN THE .ENV WE DO ->
+MONGODB_URI = 'PASTE THE URI'
+MONGODB_URI ='mongodb+srv://vknd6976_db_user:<db_password>@cluster0.ys8eb3i.mongodb.net/?appName=Cluster0'
+THEN IN THE PASS WORD ENTER THE PASSWORD , zJM9YaHJkoRXTkRT
+BEFORE THE ? WE ENTER THE DATABASE NAME CALLED 'todo'
+
+MONGODB_URI ='mongodb+srv://vknd6976_db_user:zJM9YaHJkoRXTkRT@cluster0.ys8eb3i.mongodb.net/todo?appName=Cluster0'
+
+we create the docker composed file ->
+in root directory (farm-todo) -> create 'compose.yaml'
+
+this is the docker compose configuration file ->
+the code to run multidocker container applications
+
+explanation ->
+Top-level
+name: todo-app
+services:
+  ...
+Defines the project name as todo-app.
+services lists the containers that Docker Compose will run. In this case: nginx, frontend, and backend.
+2️⃣ Service: nginx
+nginx:
+  image: nginx:1.17
+  volumes:
+    - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  ports:
+    - 8000:80
+  depends_on:
+    - backend
+    - frontend
+Explanation:
+Uses the official nginx image version 1.17.
+Mounts your local ./nginx/nginx.conf file into the container to configure nginx.
+Maps container port 80 → host port 8000 (localhost:8000).
+depends_on ensures nginx starts after the frontend and backend services.
+Essentially, nginx acts as a reverse proxy for your frontend and backend.
+3️⃣ Service: frontend
+frontend:
+  image: "node:22"
+  user: "node"
+  working_dir: /home/node/app
+  environment:
+    - NODE_ENV=development
+    - WDS_SOCKET_PORT=0
+  volumes:
+    - ./frontend/:/home/node/app
+  expose:
+    - "3000"
+  ports:
+    - "3000:3000"
+  command: "npm start"
+Explanation:
+Uses Node.js version 22 image.
+Runs as the node user (not root).
+Sets working directory inside container: /home/node/app.
+Environment variables:
+NODE_ENV=development → enables dev mode
+WDS_SOCKET_PORT=0 → configures Webpack Dev Server
+Mounts local ./frontend/ folder into container → changes in code are live (hot reload).
+Exposes port 3000 internally and maps to host port 3000.
+Runs npm start → starts the frontend app (likely React/Vue/Next.js).
+4️⃣ Service: backend
+backend:
+  image: todo-app/backend
+  build: ./backend
+  volumes:
+    - ./backend/:/usr/src/app
+  expose:
+    - "3001"
+  ports:
+    - "8001:3001"
+  command: "python src/server.py"
+  environment:
+    - DEBUG=true
+  env_file:
+    - path: ./.env
+      required: true
+Explanation:
+Custom image todo-app/backend built from ./backend directory.
+Mounts local backend code into container → changes are live.
+Exposes port 3001 internally and maps to host port 8001.
+Runs backend server: python src/server.py.
+Environment variable: DEBUG=true.
+Loads additional environment variables from .env (required file).
+
+How it all works together
+backend → Python API server on port 3001
+frontend → Node.js app on port 3000
+nginx → listens on host port 8000, proxies traffic to frontend/backend
+
+What is Nginx?
+Nginx is a high-performance web server and reverse proxy server.
+Originally developed for serving static websites efficiently
+Now widely used for load balancing, caching, and reverse proxying
+
+Browser → request → nginx container (port 8000)
+Nginx forwards requests to:
+frontend service (Node.js app on port 3000)
+backend service (Python API on port 3001)
+Nginx can also serve static files or handle HTTPS
+
+How traffic flows
+Browser → Nginx (localhost:8000)
+Nginx receives the request.
+Based on its configuration, it decides whether to forward the request to frontend or backend.
+Nginx → Frontend (container port 3000)
+If it’s a request for the web app (like /), nginx forwards it to the frontend container.
+Nginx → Backend (container port 3001)
+If it’s an API request (like /api/todos), nginx forwards it to the backend container.
+
+we create a 'ngnix' directory ->
+create a file named 'ngnix.conf' ->
+code :
+server {
+    listen 80;
+    server_name farm_intro;
+
+    location / {
+        proxy_pass http://frontend:3000;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /api {
+        proxy_pass http://backend:3001/api;
+    }
+}
+
+
+/ → frontend
+/api → backend
+proxy_set_header Upgrade $http_upgrade + Connection "upgrade" → needed for WebSocket support (like React/Vue dev server hot reload)
+Keeps frontend and backend on separate ports internally, but users access everything via Nginx on port 80 (or 8000 mapped externally)
+
+now setting up the react application ->
+farm-todo -> frontend -> 
+in terminal : npx create-react-app .
+
+
+
 
 
 
